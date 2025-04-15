@@ -1,55 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <!-- Centralized Signup Card -->
-    <div class="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
-        <h1 class="text-2xl font-semibold text-center mb-6">Signup</h1>
-<form action="/signup" method="post" class="space-y-4">
-    <div>
+  <div class="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
+    <h1 class="text-2xl font-semibold text-center mb-6">Signup</h1>
+    <form action="/signup" method="post" class="space-y-4" id="signup-form" onsubmit="return checkVerification();">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- 👇 Email with Get Code -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+        <div class="flex border border-gray-300 rounded-lg overflow-hidden">
+          <input type="email" id="email" name="email" required class="p-2 flex-grow focus:outline-none">
+          <button type="button" id="get-code" class="px-4 border-l text-sm bg-gray-200 hover:bg-gray-300">Get Code</button>
+        </div>
+      </div>
+
+      <!-- 👇 Dynamic Verification Code Field -->
+      <div id="code-section" class="hidden">
+        <label for="verify_code" class="block text-sm font-medium text-gray-700">Enter Code</label>
+        <input type="text" id="verify_code" name="verify_code"
+               pattern="^[0-9]{6}$"
+               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm"
+               placeholder="6-digit code">
+        <p id="verify-message" class="text-sm mt-1"></p>
+        <button type="button" id="verify-btn" class="mt-2 px-4 py-1 bg-green-500 text-white rounded hover:bg-green-600">
+          Verify Code
+        </button>
+      </div>
+
+      <!-- Other fields -->
+      <div>
         <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-        <input type="text" id="username" name="username" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
-    </div>
-    <div>
+        <input type="text" id="username" name="username" required minlength="3" maxlength="20" pattern="^[a-zA-Z0-9_]+$"
+               title="Alphanumeric username (3–20 characters)"
+               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
+      </div>
+      <div>
         <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="password" name="password" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
-    </div>
-    <div>
+        <input type="password" id="password" name="password" required minlength="6"
+               title="Password must be at least 6 characters"
+               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
+      </div>
+      <div>
         <label for="name" class="block text-sm font-medium text-gray-700">Your Name</label>
-        <input type="text" id="name" name="name" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
-    </div>
-    <div>
+        <input type="text" id="name" name="name" required pattern="^[a-zA-Z\s]+$"
+               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
+      </div>
+      <div>
         <label for="age" class="block text-sm font-medium text-gray-700">Your Age</label>
-        <input type="number" id="age" name="age" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
-    </div>
-    <div>
+        <input type="number" id="age" name="age" min="1" max="120" required
+               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
+      </div>
+      <div>
         <label for="likes" class="block text-sm font-medium text-gray-700">Likes (comma-separated)</label>
-        <input type="text" id="likes" name="likes" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-    </div>
-    <div>
+        <input type="text" id="likes" name="likes"
+               pattern="^[a-zA-Z0-9\s,]*$"
+               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
+      </div>
+      <div>
         <label for="dislikes" class="block text-sm font-medium text-gray-700">Dislikes (comma-separated)</label>
-        <input type="text" id="dislikes" name="dislikes" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-    </div>
-    <div>
+        <input type="text" id="dislikes" name="dislikes"
+               pattern="^[a-zA-Z0-9\s,]*$"
+               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
+      </div>
+      <div>
         <label for="favorite_sports" class="block text-sm font-medium text-gray-700">Favorite Sports (comma-separated)</label>
-        <input type="text" id="favorite_sports" name="favorite_sports" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-    </div>
-    <div>
+        <input type="text" id="favorite_sports" name="favorite_sports"
+               pattern="^[a-zA-Z0-9\s,]*$"
+               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
+      </div>
+      <div>
         <label for="favorite_songs" class="block text-sm font-medium text-gray-700">Favorite Songs (comma-separated)</label>
-        <input type="text" id="favorite_songs" name="favorite_songs" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
-    </div>
-    <button type="submit" class="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        <input type="text" id="favorite_songs" name="favorite_songs"
+               pattern="^[a-zA-Z0-9\s,]*$"
+               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
+      </div>
+
+      <button type="submit" class="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600">
         Signup
-    </button>
-</form>
-    <p class="mt-4 text-center text-sm text-gray-600">Already have an account? <a href="/login" class="text-blue-500 hover:underline">Login here!</a></p>
-    </div>
+      </button>
+    </form>
+    <p class="mt-4 text-center text-sm text-gray-600">
+      Already have an account? <a href="/login" class="text-blue-500 hover:underline">Login here!</a>
+    </p>
+  </div>
+
+  <script>
+    const getCodeBtn = document.getElementById("get-code");
+    const verifyBtn = document.getElementById("verify-btn");
+    const emailInput = document.getElementById("email");
+    const codeInput = document.getElementById("verify_code");
+    const codeSection = document.getElementById("code-section");
+    const verifyMsg = document.getElementById("verify-message");
+
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+    window.verified = false;
+
+    getCodeBtn.addEventListener("click", async () => {
+      const email = emailInput.value;
+      if (!email || !email.includes("@")) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      const res = await fetch("/send_2fa_code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken
+        },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await res.json();
+      if (data.status === "sent") {
+        codeSection.classList.remove("hidden");
+        verifyMsg.textContent = "Verification code sent to your email!";
+        verifyMsg.className = "text-green-600 text-sm";
+      } else {
+        verifyMsg.textContent = "Error sending code. Try again.";
+        verifyMsg.className = "text-red-600 text-sm";
+      }
+    });
+
+    verifyBtn.addEventListener("click", async () => {
+      const userCode = codeInput.value.trim();
+      if (!/^\d{6}$/.test(userCode)) {
+        verifyMsg.textContent = "Invalid code format.";
+        verifyMsg.className = "text-red-600 text-sm";
+        return;
+      }
+
+      const res = await fetch("/verify_2fa_code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken
+        },
+        body: JSON.stringify({ code: userCode })
+      });
+
+      const data = await res.json();
+      if (data.status === "verified") {
+        window.verified = true;
+        verifyMsg.textContent = "✅ Code verified successfully.";
+        verifyMsg.className = "text-green-600 text-sm";
+      } else {
+        window.verified = false;
+        verifyMsg.textContent = "❌ Incorrect verification code.";
+        verifyMsg.className = "text-red-600 text-sm";
+      }
+    });
+
+    function checkVerification() {
+      if (!window.verified) {
+        alert("Please verify your email before submitting the form.");
+        return false;
+      }
+      return true;
+    }
+  </script>
 </body>
 </html>
-
