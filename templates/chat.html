@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Chat with AI Assistant</title>
+</head>
+<body class="bg-gray-100">
+    <div id="chat-container" class="max-w-lg mx-auto mt-10 bg-white rounded-lg shadow-lg overflow-hidden">
+        <div id="chat-header" class="flex justify-between items-center p-4 bg-blue-600 text-white">
+            <h2 class="text-lg font-semibold">Chat with AI Assistant</h2>
+            <div>
+                <button id="end-chat" class="bg-red-600 px-3 py-1 rounded">End Chat</button>
+                <button id="close-chat" class="ml-2 px-3 py-1 rounded bg-gray-300">X</button>
+            </div>
+        </div>
+        <div id="chat-log" class="chat-log p-4 overflow-y-auto h-80 border-b border-gray-300"></div>
+        <div id="input-container" class="p-4 flex">
+            <input type="text" id="user-input" placeholder="Type your message here..." required class="flex-grow border rounded-l px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button id="send-button" class="bg-blue-600 text-white rounded-r px-4 py-2 hover:bg-blue-500">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Event listener for sending the message
+        document.getElementById("send-button").addEventListener("click", function() {
+            const userInput = document.getElementById("user-input").value;
+            if (userInput.trim() === "") return;
+
+            // Clear input field
+            document.getElementById("user-input").value = "";
+
+            // Add the user's message to the chat log
+            addMessageToChat("You", userInput);
+
+            // Call the function to send the message
+            sendMessage(userInput);
+        });
+
+        // Function to send message to the server
+        function sendMessage(message) {
+            fetch("/send_message", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response) {
+                    addMessageToChat("Bot", data.response);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        // Function to add messages to the chat log
+        function addMessageToChat(sender, message) {
+            const chatLog = document.getElementById("chat-log");
+            const messageElement = document.createElement("div");
+            messageElement.className = "mb-2"; // Add margin for spacing
+            messageElement.textContent = `${sender}: ${message}`;
+            chatLog.appendChild(messageElement);
+            chatLog.scrollTop = chatLog.scrollHeight;  // Scroll to the bottom
+        }
+
+        // Event listener for the End Chat button
+        document.getElementById("end-chat").addEventListener("click", function() {
+            fetch("/end_chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response after ending the chat
+                if (data.alarming) {
+                    alert("This chat contains alarming content. Please seek help if necessary.");
+                }
+                console.log("Chat Summary:", data.summary);
+                // Optionally redirect or close the chat
+                alert("Chat ended successfully.");
+                // Optionally redirect to another page or reset the chat
+                window.location.href = "/";
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        // Event listener for the close button
+        document.getElementById("close-chat").addEventListener("click", function() {
+            window.location.href = "/";  // Redirect to the homepage or previous page
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,112 @@
+/* chat.css */
+
+* {
+    box-sizing: border-box; /* Ensure padding and borders are included in element's total width and height */
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5; /* Light background for contrast */
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full height of the viewport */
+}
+
+#chat-container {
+    width: 100%;
+    max-width: 600px; /* Max width for larger screens */
+    height: 80vh; /* Set height for the chat window */
+    background-color: #ffffff; /* White background for the chat window */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+}
+
+#chat-header {
+    background-color: #007bff; /* Header background color */
+    color: white; /* Header text color */
+    padding: 15px; /* Padding for header */
+    display: flex;
+    justify-content: space-between; /* Space between title and buttons */
+    align-items: center; /* Center items vertically */
+    border-top-left-radius: 8px; /* Rounded corners for the top left */
+    border-top-right-radius: 8px; /* Rounded corners for the top right */
+}
+
+#chat-log {
+    flex: 1; /* Take up remaining space */
+    padding: 20px; /* Padding inside the chat log */
+    overflow-y: auto; /* Enable vertical scrolling */
+    display: flex;
+    flex-direction: column; /* Stack messages vertically */
+}
+
+.user-message,
+.bot-message {
+    max-width: 80%; /* Limit message width */
+    padding: 10px; /* Padding for message bubbles */
+    border-radius: 20px; /* Rounded corners for message bubbles */
+    margin-bottom: 10px; /* Space between messages */
+    position: relative; /* For positioning */
+    word-wrap: break-word; /* Allow long words to break */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
+}
+
+.user-message {
+    background-color: #e1ffc7; /* Light green for user messages */
+    align-self: flex-end; /* Align user messages to the right */
+    margin-left: auto; /* Push user messages to the right */
+}
+
+.bot-message {
+    background-color: #f1f1f1; /* Light gray for bot messages */
+    align-self: flex-start; /* Align bot messages to the left */
+    margin-right: auto; /* Push bot messages to the left */
+}
+
+#input-container {
+    display: flex; /* Flexbox for input and button */
+    padding: 10px; /* Padding for input container */
+    border-top: 1px solid #ddd; /* Divider above input */
+}
+
+#user-input {
+    flex: 1; /* Take up remaining space */
+    padding: 10px; /* Padding for input field */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 20px; /* Rounded corners */
+    margin-right: 10px; /* Space between input and button */
+}
+
+#send-button,
+#end-chat {
+    background-color: #007bff; /* Blue background for buttons */
+    color: white; /* White text color for buttons */
+    border: none; /* Remove border */
+    border-radius: 20px; /* Rounded corners */
+    padding: 10px 15px; /* Padding for buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+#send-button:hover,
+#end-chat:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+#close-chat {
+    background-color: #f44336; /* Red background for close button */
+    color: white; /* White text color for close button */
+    border: none; /* Remove border */
+    border-radius: 20px; /* Rounded corners */
+    padding: 5px 10px; /* Padding for close button */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+#close-chat:hover {
+    background-color: #c62828; /* Darker red on hover */
+}
+

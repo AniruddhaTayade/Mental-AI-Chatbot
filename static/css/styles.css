@@ -1,0 +1,153 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+header {
+    background-color: #f0f0f0;
+    padding: 20px;
+    text-align: center;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+/* Mood Zone Styling */
+.mood-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px 40px;
+    justify-items: center;
+}
+
+.mood-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 20px;
+    max-width: 250px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.mood-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mood-card img {
+    width: 100%;
+    border-radius: 10px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.mood-card h2 {
+    font-size: 1.5em;
+    margin-top: 15px;
+    color: #333;
+}
+
+.mood-card a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Chatbox and Main Content Styling */
+main {
+    padding: 20px;
+    text-align: center;
+}
+
+.chatbox {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    max-width: 500px;
+    margin: auto;
+}
+
+#chat-log {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+/* Form Inputs */
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Button Styling */
+button {
+    padding: 10px;
+    width: 100%;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Specific Mood Page Styling */
+.mood-page {
+    text-align: center;
+    padding: 20px;
+}
+
+.mood-page h1 {
+    font-size: 2.5em;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+.mood-page section {
+    margin-bottom: 30px;
+}
+
+.mood-page ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.mood-page ul li {
+    margin: 10px 0;
+}
+
+.mood-page ul li a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.mood-page ul li a:hover {
+    text-decoration: underline;
+}
+

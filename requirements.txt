@@ -1,0 +1,14 @@
+Flask==2.3.2                # Main web framework
+Flask-Cors==3.0.10          # For handling Cross-Origin Resource Sharing (CORS)
+Flask-Login==0.6.2          # User session management
+Flask-SQLAlchemy==3.1.1     # Database integration
+Flask-Migrate==4.0.5        # Database migrations
+gunicorn==20.1.0            # WSGI HTTP server for deploying the app
+requests==2.28.1            # For making HTTP requests
+numpy==1.26.4              # For numerical operations
+pandas==1.5.1               # For data manipulation and analysis
+transformers==4.31.0        # For using transformer models
+torch==2.2.2                # PyTorch, required for transformers
+tensorflow==2.18.0          # TensorFlow, optional for model handling
+scikit-learn==1.2.2         # For machine learning models
+

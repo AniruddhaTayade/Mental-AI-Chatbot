@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+    <!-- Header -->
+    <header class="bg-blue-600 p-4">
+        <div class="flex justify-between items-center">
+            <div class="text-white text-2xl font-bold">Tina</div>
+            <nav class="flex items-center space-x-4">
+                <a href="#" class="text-white hover:underline">About Us</a>
+                <a href="#" class="text-white hover:underline">Contact</a>
+                <div>
+                    {% if current_user.is_authenticated %}
+                        <span class="text-white">Welcome, {{ current_user.name }}</span>
+                        <a href="/logout" class="bg-white text-blue-600 px-4 py-2 rounded">Logout</a>
+                    {% else %}
+                        <a href="/signup" class="bg-white text-blue-600 px-4 py-2 rounded">Sign Up</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </header
+    <!-- Hero Section -->
+<section class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+    <div class="grid max-w-screen-xl px-4 py-16 mx-auto lg:gap-8 lg:grid-cols-12">
+        <div class="mr-auto place-self-center lg:col-span-7">
+            <h1 class="max-w-2xl mb-4 text-5xl font-extrabold tracking-tight leading-none md:text-6xl xl:text-7xl">Talk to Tina</h1>
+            <p class="max-w-2xl mb-6 font-light text-gray-200 lg:mb-8 md:text-lg lg:text-xl">Chat with our AI-powered assistant for support and resources tailored to your mental health needs.</p>
+            <a href="/chat" class="inline-flex items-center justify-center px-6 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300">
+                Start Chatting
+                <svg class="w-5 h-5 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </a>
+                   </div>
+        <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
+            <img src="../static/images/bot.jpg" alt="mockup" class="rounded-lg shadow-lg">
+        </div>                
+    </div>
+</section>>
+    <!-- Chatbot Features Section -->
+    <section class="px-6 py-10">
+        <h2 class="text-3xl text-center mb-6">Chatbot Features</h2>
+        <div class="flex justify-center space-x-6">
+            <div class="bg-white border rounded-lg p-5 shadow-lg w-60 text-center">
+                <h3 class="text-xl font-semibold mb-2">Confidentiality</h3>
+                <p>Enjoy secure and anonymous conversations.</p>
+            </div>
+            <div class="bg-white border rounded-lg p-5 shadow-lg w-60 text-center">
+                <h3 class="text-xl font-semibold mb-2">24/7 Support</h3>
+                <p>Get help anytime you need it, day or night.</p>
+            </div>
+            <div class="bg-white border rounded-lg p-5 shadow-lg w-60 text-center">
+                <h3 class="text-xl font-semibold mb-2">Expert Resources</h3>
+                <p>Access a wealth of mental health resources.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Sessions Section -->
+    {% if current_user.is_authenticated %}
+    <section class="px-6 py-10 bg-white">
+        <h2 class="text-3xl font-semibold text-center mb-6">Your Chat Sessions</h2>
+        <p class="text-center text-gray-600 mb-4">Here you can view your recent chat sessions and summaries.</p>
+        
+        <div id="sessions-list" class="max-w-4xl mx-auto space-y-4">
+            <!-- Sessions will be dynamically loaded here -->
+        </div>
+    </section>
+    {% endif %}
+<!-- Explore Your Mood Section -->
+<section class="px-6 py-10 bg-white">
+    <h2 class="text-3xl font-semibold text-center mb-6">Explore Your Mood</h2>
+    <p class="text-center text-gray-600 mb-4">Discover resources and insights tailored to your emotional well-being.</p>
+    <div class="flex justify-center">
+        <a href="/mood-zone" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">Go to Mood Zone</a>
+    </div>
+</section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white text-center py-4 mt-10">
+        <div class="mb-2">
+            <p>Email: support@mentalhealthchatbot.com</p>
+            <p>Phone: +1 (800) 123-4567</p>
+        </div>
+        <div class="flex justify-center space-x-4">
+            <a href="#" class="hover:underline">Privacy Policy</a>
+            <a href="#" class="hover:underline">Terms of Service</a>
+        </div>
+        <div class="mt-2">
+            <a href="#" class="hover:underline">Facebook</a>
+            <a href="#" class="hover:underline ml-4">Twitter</a>
+            <a href="#" class="hover:underline ml-4">Instagram</a>
+        </div>
+    </footer>
+
+    <!-- Modal for Viewing Session Details -->
+    <div id="session-details-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg max-w-lg w-full p-6">
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">Session Summary</h3>
+            <div id="session-summary" class="text-gray-700"></div>
+            <div id="session-sentiment" class="mt-4"></div>
+            <div id="session-alert" class="mt-4 text-red-600 font-bold"></div>
+            <button id="close-modal" class="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-800">Close</button>
+        </div>
+    </div>
+
+    <!-- JavaScript to fetch user sessions and show modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch sessions for the logged-in user
+            const userId = {{ current_user.id }};
+            fetch(`/session_summary/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const sessionList = document.getElementById('sessions-list');
+                    if (data.summaries && data.summaries.length > 0) {
+                        data.summaries.forEach(session => {
+                            const sessionItem = document.createElement('div');
+                            sessionItem.className = 'p-4 bg-gray-100 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200';
+                            sessionItem.innerHTML = `
+                                <p><strong>Timestamp:</strong> ${new Date(session.timestamp).toLocaleString()}</p>
+                                <p><strong>Alarming:</strong> ${session.alarming ? 'Yes' : 'No'}</p>
+                            `;
+                            sessionItem.addEventListener('click', function() {
+                                showSessionDetails(session);
+                            });
+                            sessionList.appendChild(sessionItem);
+                        });
+                    } else {
+                        sessionList.innerHTML = '<p class="text-center text-gray-600">No chat sessions found.</p>';
+                    }
+                });
+
+            // Show modal with session details
+            function showSessionDetails(session) {
+                document.getElementById('session-summary').textContent = `Summary: ${session.summary}`;
+                document.getElementById('session-sentiment').textContent = `Sentiment: ${session.sentiment.label} (Score: ${session.sentiment.score})`;
+                if (session.alarming) {
+                    document.getElementById('session-alert').textContent = '⚠️ This session contains alarming content.';
+                } else {
+                    document.getElementById('session-alert').textContent = '';
+                }
+                document.getElementById('session-details-modal').classList.remove('hidden');
+            }
+
+            // Close modal
+            document.getElementById('close-modal').addEventListener('click', function() {
+                document.getElementById('session-details-modal').classList.add('hidden');
+            });
+        });
+    </script>
+</body>
+
+</html>
+
