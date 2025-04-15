@@ -7,25 +7,23 @@ from models import db, User
 from config import model
 from models import ChatHistory
 from transformers import pipeline
-
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)  # Ensure to use a secure secret key in production
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # Use SQLite for simplicity
+app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 login_manager = LoginManager(app)
-login_manager.login_view = "login"  # Redirect here if a user is not logged in
+login_manager.login_view = "login"
 
-# Load user callback
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-
 
 @app.route("/")
 def index():
@@ -34,7 +32,6 @@ def index():
 @app.route("/chat", methods=["GET"])
 @login_required
 def chat():
-    
     return render_template("chat.html")
 
 summarizer = pipeline("summarization", device=0)
@@ -48,10 +45,8 @@ def send_message():
     if not user_message:
         return jsonify({"response": "No message provided"}), 400
     
-    # Get the bot response
     bot_response = get_chatbot_response(user_message)
 
-    # Accumulate messages in session
     if 'chat_log' not in session:
         session['chat_log'] = []
 
@@ -63,25 +58,20 @@ def send_message():
 @app.route("/end_chat", methods=["POST"])
 @login_required
 def end_chat():
-    # Retrieve the accumulated chat log from the session
     chat_log = session.get('chat_log', [])
 
     if not chat_log:
         return jsonify({"message": "No chat history to save."}), 400
-    
-    # Combine the chat log into a single string
+
     chat_content = "\n".join(chat_log)
 
-    # Run summary analysis on the chat
     summary = summarizer(chat_content, max_length=150, min_length=30, do_sample=False)[0]['summary_text']
     sentiment = sentiment_analyzer(chat_content)[0]
 
-    # Check if the chat contains alarming content
     alarming = False
     if sentiment['label'] == 'NEGATIVE' and sentiment['score'] > 0.9:
         alarming = True
 
-    # Save the chat session to the ChatHistory model
     new_chat = ChatHistory(
         user_id=current_user.id,
         chat_content=chat_content,
@@ -90,18 +80,15 @@ def end_chat():
     db.session.add(new_chat)
     db.session.commit()
 
-    # Clear the chat log from session after saving
     session.pop('chat_log', None)
 
-    # Return summary and alarming flag
     return jsonify({
         "summary": summary,
         "sentiment": sentiment,
         "alarming": alarming
     })
-# Function to send user input to the Gemini API and get a response
+
 def get_chatbot_response(user_input):
-    # Collect user information for personalization
     user_info = f"""
     User's Name: {current_user.name}
     Likes: {', '.join(current_user.likes)}
@@ -110,10 +97,8 @@ def get_chatbot_response(user_input):
     Favorite Songs: {', '.join(current_user.favorite_songs)}
     """
 
-    # Prepend the user information to the user input
     full_input = user_info + "\nUser says: " + user_input
 
-    # Start a chat session without context
     chat_session = model.start_chat(
         history=[
             {
@@ -123,10 +108,7 @@ def get_chatbot_response(user_input):
         ]
     )
 
-    # Send the user input and get the response
     response = chat_session.send_message(full_input)
-
-    # Extract and return the model's response text
     return response.text
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -136,20 +118,22 @@ def signup():
         password = request.form["password"]
         name = request.form["name"]
         age = request.form["age"]
-        likes = request.form.getlist("likes")  # Assuming likes is a multiple-choice input
-        dislikes = request.form.getlist("dislikes")  # Assuming dislikes is a multiple-choice input
-        favorite_sports = request.form.getlist("favorite_sports")  # Assuming sports is a multiple-choice input
-        favorite_songs = request.form.getlist("favorite_songs")  # Assuming songs is a multiple-choice input
+        likes = request.form.getlist("likes")
+        dislikes = request.form.getlist("dislikes")
+        favorite_sports = request.form.getlist("favorite_sports")
+        favorite_songs = request.form.getlist("favorite_songs")
+
+        hashed_password = generate_password_hash(password)
 
         new_user = User(
             username=username,
-            password=password,
+            password=hashed_password,
             name=name,
             age=age,
-            likes=", ".join(likes),  # Convert list to a comma-separated string
-            dislikes=", ".join(dislikes),  # Convert list to a comma-separated string
-            favorite_sports=", ".join(favorite_sports),  # Convert list to a comma-separated string
-            favorite_songs=", ".join(favorite_songs)  # Convert list to a comma-separated string
+            likes=", ".join(likes),
+            dislikes=", ".join(dislikes),
+            favorite_sports=", ".join(favorite_sports),
+            favorite_songs=", ".join(favorite_songs)
         )
 
         try:
@@ -159,19 +143,18 @@ def signup():
             return redirect(url_for("index"))
         except Exception as e:
             flash("Username already exists. Please choose a different one.", "danger")
-            print(e)  # Print exception for debugging
+            print(e)
     
     return render_template("signup.html")
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        user = User.query.filter_by(username=username, password=password).first()
+        user = User.query.filter_by(username=username).first()
 
-        if user:
+        if user and check_password_hash(user.password, password):
             login_user(user)
             session["username"] = user.username
             return redirect(url_for("index"))
@@ -191,7 +174,6 @@ def logout():
     logout_user()
     return redirect(url_for("login"))
 
-
 @app.route('/mood-zone')
 def mood_zone():
     return render_template('mood_zone.html')
@@ -202,8 +184,8 @@ def mood_page(mood_name):
 
 @app.route("/users")
 def view_users():
-    users = User.query.all()  # Query all users from the database
-    return render_template("user.html", users=users)  # Render a template to display users
+    users = User.query.all()
+    return render_template("user.html", users=users)
 
 @app.route('/save_chat', methods=['POST'])
 @login_required
@@ -213,7 +195,6 @@ def save_chat():
         user_message = data.get("message")
         bot_response = get_chatbot_response(user_message)
 
-        # Save chat history in the database
         chat_history = ChatHistory(
             user_id=current_user.id,
             chat_content=f"User: {user_message}\nBot: {bot_response}",
@@ -227,18 +208,15 @@ def save_chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/get_user_sessions', methods=['GET'])
 @login_required
 def get_user_sessions():
     try:
-        # Query chat history for the current user
         user_sessions = ChatHistory.query.filter_by(user_id=current_user.id).order_by(ChatHistory.timestamp.desc()).all()
 
         if not user_sessions:
             return jsonify({"message": "No chat history found"}), 404
 
-        # Format session data
         session_data = [
             {
                 "id": session.id,
@@ -255,11 +233,9 @@ def get_user_sessions():
 @app.route('/session_summary/<int:user_id>', methods=['GET'])
 @login_required
 def session_summary(user_id):
-    # Ensure the user is viewing their own session or is authorized
     if current_user.id != user_id:
         return jsonify({'error': 'Unauthorized access'}), 403
 
-    # Query the chat history for the user from the database
     sessions = ChatHistory.query.filter_by(user_id=user_id).all()
 
     if not sessions:
@@ -267,18 +243,15 @@ def session_summary(user_id):
 
     summaries = []
 
-    # Summarize and analyze each session
     for session in sessions:
         chat_content = session.chat_content
         summary = summarizer(chat_content, max_length=150, min_length=30, do_sample=False)[0]['summary_text']
         sentiment = sentiment_analyzer(chat_content)[0]
 
         alarming = False
-        # If sentiment is negative and score is higher than a threshold, flag it as alarming
         if sentiment['label'] == 'NEGATIVE' and sentiment['score'] > 0.9:
             alarming = True
 
-        # Add the summary, sentiment, alarming flag, and timestamp to the response
         summaries.append({
             'summary': summary,
             'sentiment': {
@@ -289,10 +262,9 @@ def session_summary(user_id):
             'timestamp': session.timestamp
         })
 
-    # Return the list of session summaries
     return jsonify({'summaries': summaries})
+
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()  # Create database tables
+        db.create_all()
     app.run(debug=True)
-
