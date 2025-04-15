@@ -38,8 +38,8 @@ This mental health assistant Flask-based web application designed to provide a s
 ### Installation Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/vanshdhar999/Mental-Health-Chatbot
-   cd Mental-Health-Chatbot
+   git clone https://github.com/AniruddhaTayade/Mental-AI-Chatbot
+   cd Mental-AI-Chatbot
    ```
 
 2. Install dependencies:
