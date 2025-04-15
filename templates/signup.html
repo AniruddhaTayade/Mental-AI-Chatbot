@@ -14,7 +14,7 @@
     <form action="/signup" method="post" class="space-y-4" id="signup-form" onsubmit="return checkVerification();">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-      <!-- 👇 Email with Get Code -->
+      <!-- Email with Get Code -->
       <div>
         <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
         <div class="flex border border-gray-300 rounded-lg overflow-hidden">
@@ -23,65 +23,30 @@
         </div>
       </div>
 
-      <!-- 👇 Dynamic Verification Code Field -->
+      <!-- Verification Code -->
       <div id="code-section" class="hidden">
         <label for="verify_code" class="block text-sm font-medium text-gray-700">Enter Code</label>
-        <input type="text" id="verify_code" name="verify_code"
-               pattern="^[0-9]{6}$"
-               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm"
-               placeholder="6-digit code">
+        <input type="text" id="verify_code" name="verify_code" pattern="^[0-9]{6}$" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm" placeholder="6-digit code">
         <p id="verify-message" class="text-sm mt-1"></p>
-        <button type="button" id="verify-btn" class="mt-2 px-4 py-1 bg-green-500 text-white rounded hover:bg-green-600">
-          Verify Code
-        </button>
+        <button type="button" id="verify-btn" class="mt-2 px-4 py-1 bg-green-500 text-white rounded hover:bg-green-600">Verify Code</button>
       </div>
 
       <!-- Other fields -->
-      <div>
-        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-        <input type="text" id="username" name="username" required minlength="3" maxlength="20" pattern="^[a-zA-Z0-9_]+$"
-               title="Alphanumeric username (3–20 characters)"
-               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
-      </div>
-      <div>
-        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-        <input type="password" id="password" name="password" required minlength="6"
-               title="Password must be at least 6 characters"
-               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
-      </div>
-      <div>
-        <label for="name" class="block text-sm font-medium text-gray-700">Your Name</label>
-        <input type="text" id="name" name="name" required pattern="^[a-zA-Z\s]+$"
-               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
-      </div>
-      <div>
-        <label for="age" class="block text-sm font-medium text-gray-700">Your Age</label>
-        <input type="number" id="age" name="age" min="1" max="120" required
-               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
-      </div>
-      <div>
-        <label for="likes" class="block text-sm font-medium text-gray-700">Likes (comma-separated)</label>
-        <input type="text" id="likes" name="likes"
-               pattern="^[a-zA-Z0-9\s,]*$"
-               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
-      </div>
-      <div>
-        <label for="dislikes" class="block text-sm font-medium text-gray-700">Dislikes (comma-separated)</label>
-        <input type="text" id="dislikes" name="dislikes"
-               pattern="^[a-zA-Z0-9\s,]*$"
-               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
-      </div>
-      <div>
-        <label for="favorite_sports" class="block text-sm font-medium text-gray-700">Favorite Sports (comma-separated)</label>
-        <input type="text" id="favorite_sports" name="favorite_sports"
-               pattern="^[a-zA-Z0-9\s,]*$"
-               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
-      </div>
-      <div>
-        <label for="favorite_songs" class="block text-sm font-medium text-gray-700">Favorite Songs (comma-separated)</label>
-        <input type="text" id="favorite_songs" name="favorite_songs"
-               pattern="^[a-zA-Z0-9\s,]*$"
-               class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm">
+      <div><label for="username" class="block text-sm font-medium text-gray-700">Username</label><input type="text" id="username" name="username" required minlength="3" maxlength="20" pattern="^[a-zA-Z0-9_]+$" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm"></div>
+      <div><label for="password" class="block text-sm font-medium text-gray-700">Password</label><input type="password" id="password" name="password" required minlength="6" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm"></div>
+      <div><label for="name" class="block text-sm font-medium text-gray-700">Your Name</label><input type="text" id="name" name="name" required pattern="^[a-zA-Z\s]+$" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm"></div>
+      <div><label for="age" class="block text-sm font-medium text-gray-700">Your Age</label><input type="number" id="age" name="age" min="1" max="120" required class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm"></div>
+      <div><label for="likes" class="block text-sm font-medium text-gray-700">Likes (comma-separated)</label><input type="text" id="likes" name="likes" pattern="^[a-zA-Z0-9\s,]*$" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm"></div>
+      <div><label for="dislikes" class="block text-sm font-medium text-gray-700">Dislikes (comma-separated)</label><input type="text" id="dislikes" name="dislikes" pattern="^[a-zA-Z0-9\s,]*$" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm"></div>
+      <div><label for="favorite_sports" class="block text-sm font-medium text-gray-700">Favorite Sports</label><input type="text" id="favorite_sports" name="favorite_sports" pattern="^[a-zA-Z0-9\s,]*$" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm"></div>
+      <div><label for="favorite_songs" class="block text-sm font-medium text-gray-700">Favorite Songs</label><input type="text" id="favorite_songs" name="favorite_songs" pattern="^[a-zA-Z0-9\s,]*$" class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm"></div>
+
+      <!-- Terms & Conditions -->
+      <div class="flex items-start space-x-2">
+        <input type="checkbox" id="terms" name="terms" class="mt-1">
+        <label for="terms" class="text-sm text-gray-700">I agree to the 
+          <a href="#" onclick="showTerms(event)" class="text-blue-500 underline">Terms and Conditions</a>
+        </label>
       </div>
 
       <button type="submit" class="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600">
@@ -93,6 +58,25 @@
     </p>
   </div>
 
+  <!-- Modal for Terms -->
+  <div id="termsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg max-w-lg w-full shadow-xl">
+      <h2 class="text-lg font-semibold mb-4">Terms and Conditions</h2>
+      <div class="text-sm text-gray-700 max-h-64 overflow-y-auto space-y-2">
+        <p>1. This chatbot is intended solely for educational and awareness purposes. It is not a replacement for professional mental health advice, diagnosis, or treatment.</p>
+        <p>2. By using this application, you agree to share your personal preferences and mood inputs voluntarily.</p>
+        <p>3. The application will store anonymized chat history for analysis and insights. No personal data is sold or shared with third parties.</p>
+        <p>4. Users are prohibited from misusing the system to input harmful, offensive, or misleading information.</p>
+        <p>5. All security measures, including 2FA and CAPTCHA, are for protection against unauthorized access and spam.</p>
+        <p>6. The development team is not liable for any misuse or unintended outcomes resulting from chatbot interactions.</p>
+      </div>
+      <div class="mt-4 text-right">
+        <button onclick="closeTerms()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
   <script>
     const getCodeBtn = document.getElementById("get-code");
     const verifyBtn = document.getElementById("verify-btn");
@@ -100,7 +84,6 @@
     const codeInput = document.getElementById("verify_code");
     const codeSection = document.getElementById("code-section");
     const verifyMsg = document.getElementById("verify-message");
-
     const csrfToken = document.querySelector('input[name="csrf_token"]').value;
     window.verified = false;
 
@@ -131,7 +114,7 @@
       }
     });
 
-    verifyBtn.addEventListener("click", async () => {
+    verifyBtn?.addEventListener("click", async () => {
       const userCode = codeInput.value.trim();
       if (!/^\d{6}$/.test(userCode)) {
         verifyMsg.textContent = "Invalid code format.";
@@ -161,11 +144,25 @@
     });
 
     function checkVerification() {
+      const terms = document.getElementById("terms");
       if (!window.verified) {
         alert("Please verify your email before submitting the form.");
         return false;
       }
+      if (!terms.checked) {
+        alert("Please accept the Terms and Conditions.");
+        return false;
+      }
       return true;
+    }
+
+    function showTerms(e) {
+      e.preventDefault();
+      document.getElementById("termsModal").classList.remove("hidden");
+    }
+
+    function closeTerms() {
+      document.getElementById("termsModal").classList.add("hidden");
     }
   </script>
 </body>
