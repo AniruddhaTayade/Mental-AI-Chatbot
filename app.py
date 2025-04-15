@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from flask_wtf.csrf import CSRFProtect
 from flask_mail import Mail, Message  # ✅ For sending emails
+import requests
 
 # Load environment variables
 load_dotenv()
@@ -155,8 +156,21 @@ def verify_2fa_code():
 
 
 @app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
+        # 👇 reCAPTCHA verification
+        recaptcha_response = request.form.get("g-recaptcha-response")
+        secret_key = os.getenv("RECAPTCHA_SECRET_KEY")
+        verify_url = "https://www.google.com/recaptcha/api/siteverify"
+        payload = {"secret": secret_key, "response": recaptcha_response}
+        recaptcha_check = requests.post(verify_url, data=payload).json()
+
+        if not recaptcha_check.get("success"):
+            flash("CAPTCHA verification failed. Please try again.", "danger")
+            return redirect(url_for("login"))
+
+        # 👇 Proceed with login logic
         username = request.form["username"]
         password = request.form["password"]
         user = User.query.filter_by(username=username).first()
@@ -169,7 +183,8 @@ def login():
         else:
             flash("Invalid username or password. Please try again.", "danger")
 
-    return render_template("login.html")
+    return render_template("login.html", recaptcha_site_key=os.getenv("RECAPTCHA_SITE_KEY"))
+
 
 @app.route("/logout")
 @login_required
