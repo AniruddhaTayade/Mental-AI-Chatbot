@@ -8,7 +8,7 @@ from config import model
 from models import ChatHistory
 from transformers import pipeline
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta  # ✅ added timedelta
 
 load_dotenv()
 
@@ -16,10 +16,14 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.permanent_session_lifetime = timedelta(minutes=15)  # ✅ Session timeout
 
 db.init_app(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
+
+# 🔁 NEW: Store chat sessions per user for memory
+chat_sessions = {}
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -44,7 +48,7 @@ def send_message():
 
     if not user_message:
         return jsonify({"response": "No message provided"}), 400
-    
+
     bot_response = get_chatbot_response(user_message)
 
     if 'chat_log' not in session:
@@ -52,6 +56,15 @@ def send_message():
 
     session['chat_log'].append(f"User: {user_message}")
     session['chat_log'].append(f"Bot: {bot_response}")
+
+    chat_content = f"User: {user_message}\nBot: {bot_response}"
+    chat_history = ChatHistory(
+        user_id=current_user.id,
+        chat_content=chat_content,
+        timestamp=datetime.utcnow()
+    )
+    db.session.add(chat_history)
+    db.session.commit()
 
     return jsonify({"response": bot_response})
 
@@ -80,7 +93,9 @@ def end_chat():
     db.session.add(new_chat)
     db.session.commit()
 
+    # 🔁 Clear memory after chat ends
     session.pop('chat_log', None)
+    chat_sessions.pop(current_user.id, None)
 
     return jsonify({
         "summary": summary,
@@ -88,6 +103,7 @@ def end_chat():
         "alarming": alarming
     })
 
+# ✅ UPDATED: Chat memory across turns using chat_sessions
 def get_chatbot_response(user_input):
     user_info = f"""
     User's Name: {current_user.name}
@@ -99,16 +115,12 @@ def get_chatbot_response(user_input):
 
     full_input = user_info + "\nUser says: " + user_input
 
-    chat_session = model.start_chat(
-        history=[
-            {
-                "role": "user",
-                "parts": [full_input],
-            }
-        ]
-    )
+    # Maintain conversation memory per user
+    if current_user.id not in chat_sessions:
+        chat_sessions[current_user.id] = model.start_chat(history=[])
 
-    response = chat_session.send_message(full_input)
+    session_obj = chat_sessions[current_user.id]
+    response = session_obj.send_message(full_input)
     return response.text
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -144,7 +156,7 @@ def signup():
         except Exception as e:
             flash("Username already exists. Please choose a different one.", "danger")
             print(e)
-    
+
     return render_template("signup.html")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -155,6 +167,7 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and check_password_hash(user.password, password):
+            session.permanent = True  # ✅ Mark session as permanent
             login_user(user)
             session["username"] = user.username
             return redirect(url_for("index"))
