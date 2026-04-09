@@ -1,151 +1,166 @@
-# Mental Health Chatbot
+# 🧠 Mental Health AI Chatbot
 
-## Overview
-This mental health assistant Flask-based web application designed to provide a safe and engaging platform for a person to discuss their mental health. It uses cutting-edge natural language processing (NLP) models to facilitate meaningful conversations, summarize chats, and analyze user sentiment. The chatbot ensures user data privacy and supports personalized interactions by tailoring responses based on user-provided information.
+![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat&logo=python)
+![Flask](https://img.shields.io/badge/Flask-2.x-black?style=flat&logo=flask)
+![SQLite](https://img.shields.io/badge/Database-SQLite-lightblue?style=flat&logo=sqlite)
+![HuggingFace](https://img.shields.io/badge/NLP-HuggingFace-yellow?style=flat&logo=huggingface)
+![Google Gemini](https://img.shields.io/badge/AI-Google%20Gemini-orange?style=flat&logo=google)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat)
 
----
-
-## Features
-- **User Authentication**: Secure signup, login, and logout functionalities.
-- **Personalized Chat**: Custom responses based on user-provided likes, dislikes, and preferences.
-- **Sentiment Analysis**: Analyzes chat sentiment to detect alarming content.
-- **Chat Summarization**: Summarizes conversations using pre-trained NLP models.
-- **Session Management**: Allows users to view and save chat history.
-- **Session Analysis**: Summarizes user chat sessions and flags potential concerns.
+> A secure, full-stack mental health assistant built with Flask, featuring real-time AI conversation,
+> NLP-powered sentiment analysis, and enterprise-grade security features.
 
 ---
 
-## Technologies Used
-- **Backend**: Flask
-- **Database**: SQLite
-- **NLP Models**: Hugging Face Transformers (Summarization, Sentiment Analysis)
-- **Authentication**: Flask-Login
-- **Frontend**: Jinja2 Templates, HTML, CSS
-- **Environment Management**: dotenv
-- **AI API**: Google Gemini API (via `google.generativeai`)
+## 🔐 Security Features
+
+This project was built with a cybersecurity-first approach:
+
+- **CSRF Protection** — All forms protected against cross-site request forgery
+- **Input Validation** — Server-side sanitization on all user inputs
+- **Secure Session Management** — Encrypted session tokens with expiry
+- **Audit Logging** — All user actions and flagged sessions are logged
+- **Email-based 2FA** — Two-factor authentication on login
+- **Password Hashing** — Credentials stored using secure hashing (never plaintext)
+- **Environment Variables** — All secrets managed via `.env`, never hardcoded
 
 ---
 
-## Setup Instructions
+## ✨ Key Features
 
-### Prerequisites
-- Python 3.8+
-- Flask
-- SQLite
-- Hugging Face Transformers library
-- Google Gemini API access
-
-### Installation Steps
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/AniruddhaTayade/Mental-AI-Chatbot
-   cd Mental-AI-Chatbot
-   ```
-
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Create a `.env` file to configure environment variables:
-   ```
-   SECRET_KEY=<your-secret-key>
-   GOOGLE_API_KEY=<your-google-api-key>
-   ```
-
-4. Initialize the database:
-   ```bash
-   flask db init
-   flask db migrate
-   flask db upgrade
-   ```
-
-5. Run the application:
-   ```bash
-   python app.py
-   ```
-
-6. Open the application in your browser at:
-   ```
-   http://127.0.0.1:PORT/
-   ```
+- **AI Conversation** — Personalized responses powered by Google Gemini API tailored to user likes, dislikes, and preferences
+- **Sentiment Analysis** — Real-time detection of alarming or distressing content using Hugging Face
+- **Chat Summarization** — Automatic session summaries using pre-trained NLP models
+- **Mood Zone** — Dynamic mood-based resource pages with targeted activities
+- **Session Dashboard** — Full history of past conversations with sentiment scores and flagged content
+- **User Authentication** — Secure signup, login, and logout via Flask-Login
 
 ---
 
-## Application Routes
+## 🛠️ Tech Stack
 
-| Route                  | Method | Description                                     |
-|------------------------|--------|-------------------------------------------------|
-| `/`                    | GET    | Homepage                                       |
-| `/signup`              | GET/POST | User signup page                              |
-| `/login`               | GET/POST | User login page                               |
-| `/logout`              | GET    | Logs out the user                              |
-| `/chat`                | GET    | Chat interface for logged-in users            |
-| `/send_message`        | POST   | Handles user messages and returns bot responses |
-| `/end_chat`            | POST   | Summarizes and saves chat history             |
-| `/dashboard`           | GET    | User dashboard displaying session details     |
-| `/mood-zone`           | GET    | Mood-specific resources page                  |
-| `/users`               | GET    | Admin view of all registered users            |
-| `/get_user_sessions`   | GET    | Retrieves all chat sessions for the current user |
-| `/session_summary/<id>`| GET    | Summarizes a specific user session            |
+| Layer | Technology |
+|-------|-----------|
+| Backend | Flask (Python) |
+| Database | SQLite |
+| AI / NLP | Google Gemini API, Hugging Face Transformers |
+| Authentication | Flask-Login |
+| Frontend | Jinja2, HTML5, CSS3 |
+| Security | CSRF, 2FA, Input Validation, Audit Logs, Secure Sessions |
 
 ---
 
-## Key Components
+## 📁 Project Structure
 
-### User Management
-- Implements user authentication via `flask_login`.
-- Stores user data, preferences, and credentials securely in an SQLite database.
-
-### Chat Functionality
-- Handles user messages and generates responses using the Google Gemini API.
-- Summarizes chats with Hugging Face's `summarization` pipeline.
-- Analyzes sentiment to flag alarming content using Hugging Face's `sentiment-analysis` pipeline.
-
-### Session Management
-- Saves chat sessions to the database (`ChatHistory` model).
-- Provides users with a summary and sentiment analysis of their past sessions.
-- Flags sessions containing potentially alarming content.
-
-### Mood Zone
-- Dynamic pages for specific moods, providing targeted resources and activities.
-
----
-
-## Models
-- **User**: Stores user details such as username, password, preferences, and favorites.
-- **ChatHistory**: Logs chat content, timestamps, and associated user IDs.
-
----
-
-## Example `.env` File
-```env
-SECRET_KEY=your-random-secret-key
-GOOGLE_API_KEY=your-google-api-key
+```
+Mental-AI-Chatbot/
+├── app.py                  # Main Flask application & routes
+├── models.py               # User & ChatHistory database models
+├── templates/              # Jinja2 HTML templates
+│   ├── index.html
+│   ├── login.html
+│   ├── signup.html
+│   ├── chat.html
+│   ├── dashboard.html
+│   └── mood_zone.html
+├── static/                 # CSS, JS, assets
+├── requirements.txt
+├── .env.example
+└── README.md
 ```
 
 ---
 
-## Future Enhancements
-- Integration with a professional mental health support service.
-- Multi-language support.
-- Improved natural language understanding for nuanced conversations.
-- Advanced mood-based content recommendations.
+## 📡 API Routes
+
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/` | GET | Homepage |
+| `/signup` | GET/POST | User registration |
+| `/login` | GET/POST | User login with 2FA |
+| `/logout` | GET | Logout |
+| `/chat` | GET | Main chat interface |
+| `/send_message` | POST | Send message, get AI response |
+| `/end_chat` | POST | Summarize and save session |
+| `/dashboard` | GET | User session dashboard |
+| `/mood-zone` | GET | Mood-based resource pages |
+| `/users` | GET | Admin view of all users |
+| `/get_user_sessions` | GET | Retrieve all sessions for current user |
+| `/session_summary/<id>` | GET | View specific session summary |
 
 ---
 
-## License
-This project is licensed under the [MIT License](LICENSE).
+## 🚀 Setup & Installation
+
+### Prerequisites
+- Python 3.8+
+- Google Gemini API key
+- Hugging Face Transformers library
+
+### Steps
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/AniruddhaTayade/Mental-AI-Chatbot
+cd Mental-AI-Chatbot
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Create .env file
+SECRET_KEY=your-random-secret-key
+GOOGLE_API_KEY=your-google-api-key
+
+# 4. Initialize the database
+flask db init
+flask db migrate
+flask db upgrade
+
+# 5. Run the application
+python app.py
+```
+
+Open in browser: `http://127.0.0.1:PORT/`
 
 ---
 
-## Contributing
-Contributions are welcome! Please submit a pull request or open an issue for discussion.
+## 🗄️ Database Models
+
+**User**
+- Stores username, hashed password, preferences, likes, dislikes, and favorites
+- Linked to all chat sessions via user ID
+
+**ChatHistory**
+- Logs full chat content, timestamps, sentiment scores, and associated user ID
+- Flags sessions containing potentially alarming content for review
 
 ---
 
-## Acknowledgements
+## 🔮 Future Enhancements
+
+- Integration with licensed mental health support services
+- Multi-language NLP support
+- Advanced mood-based content recommendation engine
+- Mobile-responsive UI overhaul
+- Real-time crisis detection and escalation alerts
+
+---
+
+## 👤 Contributor
+
+**Aniruddha Tayade**
+[LinkedIn](https://www.linkedin.com/in/aniruddhatayade/) | [GitHub](https://github.com/AniruddhaTayade)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Acknowledgements
+
 - [Hugging Face Transformers](https://huggingface.co/transformers/)
 - [Flask](https://flask.palletsprojects.com/)
-- [Google Gemini API](https://cloud.google.com/)
-
+- [Google Gemini API](https://ai.google.dev/)
